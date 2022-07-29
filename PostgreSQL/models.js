@@ -3,47 +3,51 @@
 // Import the pgClient
 var client = require('./db.js');
 
-var getAllProducts = async (count, page) => { // needs reformating with params of count/page
-  var offset = page * count
-
+var getAllProducts = async (count, page) => {
+  var offset = page * count;
   var results = await client.query(`SELECT * FROM products ORDER BY id LIMIT ${count} OFFSET ${offset}`);
-
   return results.rows;
-
   client.end();
 };
 
 var getProductInfo = async (id) => {
-  var results; // An object
+  var results = await client.query(`SELECT json_agg(name) FROM product_features group by id where id = ${id} limit 5`)
 
-  // Grab the main summary of the product data
-  var productInfoData = await client.query(`SELECT * FROM products where id = ${id}`);
-  results = productInfoData.rows[0];
-
-  results['features'] = [];
-
-  // Grab all of the features
-  var productFeatures = await client.query(`SELECT * FROM product_features where product_id = ${id}`); // An array of objects
-
-  // Iterate through the array of each feature array and delete product id and id
-  productFeatures.rows.forEach((feature) => {
-    delete feature['id'];
-    delete feature['product_id']
-    results.features.push(feature)
-  })
-
-
-  return results
+  return results.rows
   client.end();
 };
 
 var getProductStyles = async (id) => {
-  var test = await client.query(`SELECT row_to_json(product_styles) FROM (SELECT name, sale_price, original_price) AS product_styles where id = ${id}`)
 
-  return test.rows;
+};
+
+var getRelatedProducts = async(id) => {
+  var relatedProducts = await client.query(`SELECT json_agg(related_product_id) FROM related_products WHERE product_id = ${id}`);
+  return relatedProducts.rows[0].json_agg;
   client.end();
 };
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.getProductInfo = getProductInfo;
 module.exports.getProductStyles = getProductStyles;
+module.exports.getRelatedProducts = getRelatedProducts;
+
+
+
+
+// var getProductInfo = async (id) => {
+//   var results = await client.query(`SELECT json_build_object(
+//                                               'id', ${id},
+//                                               'name', p.name,
+//                                               'slogan', p.slogan,
+//                                               'description', p.description,
+//                                               'category', p.category,
+//                                               'default_price', p.default_price
+//                                             )
+//                                             FROM products p
+//                                             WHERE p.id = ${id}
+//                                          `)
+
+//   return results.rows[0].json_build_object;
+//   client.end();
+// };
