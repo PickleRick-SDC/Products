@@ -46,26 +46,17 @@ CREATE TABLE related_products (
   related_product_id INTEGER
 );
 
-CREATE TABLE cart (
-  id SERIAL PRIMARY KEY NOT NULL,
-  user_session INTEGER,
-  product_id INTEGER,
-  active INTEGER
-);
-
-
 ALTER TABLE product_features ADD FOREIGN KEY (product_id) REFERENCES products (id);
 ALTER TABLE product_styles ADD FOREIGN KEY (product_id) REFERENCES products (id);
 ALTER TABLE product_skus ADD FOREIGN KEY (style_id) REFERENCES product_styles (id);
 ALTER TABLE product_photos ADD FOREIGN KEY (style_id) REFERENCES product_styles (id);
 ALTER TABLE related_products ADD FOREIGN KEY (product_id) REFERENCES products (id);
-ALTER TABLE cart ADD FOREIGN KEY (product_id) REFERENCES products (id);
 
-COPY products FROM './csvFiles/product.csv' Header csv delimiter ',';
-COPY product_styles FROM './csvFiles/styles.csv' delimiter ',' CSV quote '"' NULL 'null';
-COPY product_features FROM './csvFiles/features.csv' header csv delimiter ',';
-COPY related_products FROM './csvFiles/related.csv' header csv delimiter ',';
-COPY product_skus FROM './csvFiles/skus.csv' header csv delimiter ',';
-COPY product_photos FROM  './csvFiles/photos.csv'  header csv delimiter ',';
-COPY cart FROM './csvFiles/cart.csv' header csv delimiter ',';
+\COPY products FROM './csvFiles/product.csv' Header csv delimiter ',';
+\COPY product_styles FROM './csvFiles/styles.csv' delimiter ',' CSV quote '"' NULL 'null';
+\COPY product_features FROM './csvFiles/features.csv' header csv delimiter ',';
+\COPY related_products FROM './csvFiles/related.csv' header csv delimiter ',';
+\COPY product_skus FROM './csvFiles/skus.csv' header csv delimiter ',';
+\COPY product_photos FROM  './csvFiles/photos.csv'  header csv delimiter ',';
+
 
