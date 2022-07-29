@@ -3,11 +3,21 @@ var routerSQL = require('express').Router();
 var models = require('./models.js');
 
 routerSQL.get('/products', (request, response) => {
+  var { count, page } = request.query;
+  var page = page - 1;
+
+  if (!count) {
+    count = 5;
+  };
+  if (!page) {
+    page = 0;
+  };
+
   var getAllProducts = async () => {
-    var results = await models.getAllProducts();
-    var smallResults = results.slice(0, 1500)
+    var results = await models.getAllProducts(count, page);
+
     try {
-      response.status(200).send(smallResults)
+      response.status(200).send(results)
     } catch(error) {
       console.log('There is an error in retrieving all of the products')
     }
@@ -16,10 +26,9 @@ routerSQL.get('/products', (request, response) => {
   getAllProducts();
 });
 
-routerSQL.get('/:id', (request, response) => {
-
+routerSQL.get('/product/:id', (request, response) => {
   var getProductInfo = async () => {
-  var results = await models.getProductInfo(request.params.id);
+    var results = await models.getProductInfo(request.params.id);
 
     try {
       response.status(200).send(results)
@@ -30,4 +39,19 @@ routerSQL.get('/:id', (request, response) => {
 
   getProductInfo();
 });
+
+routerSQL.get('/:id/styles', (request, response) => {
+  var getProductStyles = async () => {
+    var results = await models.getProductStyles(request.params.id);
+
+    try {
+      response.status(200).send(results)
+    } catch(error) {
+      console.log('Error in getting product styles from server side')
+    }
+  };
+
+  getProductStyles();
+});
+
 module.exports = routerSQL

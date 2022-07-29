@@ -3,10 +3,14 @@
 // Import the pgClient
 var client = require('./db.js');
 
-var getAllProducts = async () => {
-  var results = await client.query('SELECT * FROM products');
-  client.end()
-  return results.rows
+var getAllProducts = async (count, page) => { // needs reformating with params of count/page
+  var offset = page * count
+
+  var results = await client.query(`SELECT * FROM products ORDER BY id LIMIT ${count} OFFSET ${offset}`);
+
+  return results.rows;
+
+  client.end();
 };
 
 var getProductInfo = async (id) => {
@@ -14,7 +18,6 @@ var getProductInfo = async (id) => {
 
   // Grab the main summary of the product data
   var productInfoData = await client.query(`SELECT * FROM products where id = ${id}`);
-
   results = productInfoData.rows[0];
 
   results['features'] = [];
@@ -28,8 +31,19 @@ var getProductInfo = async (id) => {
     delete feature['product_id']
     results.features.push(feature)
   })
+
+
   return results
-}
+  client.end();
+};
+
+var getProductStyles = async (id) => {
+  var test = await client.query(`SELECT row_to_json(product_styles) FROM (SELECT name, sale_price, original_price) AS product_styles where id = ${id}`)
+
+  return test.rows;
+  client.end();
+};
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.getProductInfo = getProductInfo;
+module.exports.getProductStyles = getProductStyles;
