@@ -1,6 +1,6 @@
 // This file will create a connection to the Postgres database
 require('dotenv')
-var { Client } = require('pg');
+var { Pool, Client } = require('pg');
 
 // Provide connection string
 var client = new Client({

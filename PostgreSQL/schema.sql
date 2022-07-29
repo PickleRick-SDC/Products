@@ -20,7 +20,7 @@ CREATE TABLE product_features (
 CREATE TABLE product_styles (
   id SERIAL PRIMARY KEY NOT NULL,
   product_id INTEGER,
-  name VARCHAR(50),
+  "name" VARCHAR(50),
   sale_price INTEGER NULL,
   original_price INTEGER NULL,
   "default?" Boolean
