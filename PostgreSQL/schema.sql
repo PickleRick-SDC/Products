@@ -23,7 +23,7 @@ CREATE TABLE product_styles (
   "name" VARCHAR(50),
   sale_price INTEGER NULL,
   original_price INTEGER NULL,
-  "default?" Boolean
+  "default" Boolean
 );
 
 CREATE TABLE product_skus (
