@@ -1,82 +1,74 @@
 // These functions will retrieve data from the db AND format it exactly how it looks on Learn.
 
-// Import the pgClient
-var client = require('./db.js');
+// Import the pgPool
+var pool = require('./db.js');
 
 var getAllProducts = async (count, page) => {
   var offset = page * count;
-  var results = await client.query(`SELECT * FROM products ORDER BY id LIMIT ${count} OFFSET ${offset}`);
+  var results = await pool.query(`SELECT * FROM products ORDER BY id LIMIT ${count} OFFSET ${offset}`);
   return results.rows;
-  client.end();
+  pool.end();
 };
 
 var getProductInfo = async (id) => {
-  var results = await client.query(`SELECT json_build_object(
-                                      'id', ${id},
-                                      'name', p.name,
-                                      'slogan', p.slogan,
-                                      'description', p.description,
-                                      'category', p.category,
-                                      'default_price', p.default_price,
-                                      'features', json_agg(json_build_object(
-                                        'feature', r.feature,
-                                        'value', r.value
-                                        ))
-                                      )
-                                      FROM products p
-                                      LEFT JOIN product_features r ON p.id = r.product_id
-                                      WHERE p.id = ${id}
-                                      GROUP BY p.name, p.slogan, p.description, p.category, p.default_price`)
+  var queryString = `SELECT json_build_object(
+    'id', ${id},
+    'name', p.name,
+    'slogan', p.slogan,
+    'description', p.description,
+    'category', p.category,
+    'default_price', p.default_price,
+    'features', json_agg(json_build_object(
+      'feature', r.feature,
+      'value', r.value)))
+    FROM products p
+    LEFT JOIN product_features r ON p.id = r.product_id
+    WHERE p.id = ${id}
+    GROUP BY p.name, p.slogan, p.description, p.category, p.default_price`;
+  var results = await pool.query(queryString);
   return results.rows[0].json_build_object;
-  client.end();
+  pool.end();
 };
 
-var getProductStyles = async (id) => {
 
+var getProductStyles = async (id) => {  // p = style r = photos q = skus
+  var queryString = `SELECT
+  id AS product_id,
+  (SELECT json_agg(json_build_object(
+  'style_id', p.id,
+  'name', p.name,
+  'original_price', p.original_price,
+  'sale_price', p.sale_price,
+  'default?', p.default,
+  'photos', (SELECT json_agg(json_build_object('thumbnail_url', r.thumbnail_url, 'url', r.url))
+  FROM product_photos r
+  WHERE p.id = r.style_id),
+  'skus', (SELECT json_object_agg(q.id, json_build_object('quantity', q.quantity, 'size', q.size))
+  FROM product_skus q
+  WHERE q.style_id = p.id)
+  ))
+  AS results
+  FROM product_styles p
+  WHERE p.product_id = ${id}
+  )
+  FROM products
+  WHERE id = ${id}`
+  var results = await pool.query(queryString)
+  return results.rows[0];
+  pool.end()
 };
 
 var getRelatedProducts = async(id) => {
-  var relatedProducts = await client.query(`SELECT json_agg(related_product_id)
-                                            FROM related_products
-                                            WHERE product_id = ${id}`);
+  var queryString = `SELECT
+   json_agg(related_product_id)
+   FROM related_products
+   WHERE product_id = ${id}`
+  var relatedProducts = await pool.query(queryString);
   return relatedProducts.rows[0].json_agg;
-  client.end();
+  pool.end();
 };
 
 module.exports.getAllProducts = getAllProducts;
 module.exports.getProductInfo = getProductInfo;
 module.exports.getProductStyles = getProductStyles;
 module.exports.getRelatedProducts = getRelatedProducts;
-
-
-
-
-
-// var getProductInfo = async (id) => {
-//   var results = await client.query(`SELECT json_build_object('feature', json_agg(json_build_object('feature', p.feature, 'value', p.value))) FROM product_features p where product_id = ${id} limit 5`)
-
-//   return results.rows
-//   client.end();
-// };
-
-
-
-
-// var getProductInfo = async (id) => {
-//   var product = await client.query(`SELECT * FROM products WHERE id = ${id}`);
-//   var productFeatures = await client.query(`SELECT json_build_object(
-//                                               'feature', json_agg(
-//                                                 json_build_object(
-//                                                   'feature', p.feature,
-//                                                    'value', p.value
-//                                                    )
-//                                                   )
-//                                                 )
-//                                             FROM product_features p
-//                                             WHERE product_id = ${id}`)
-
-//   var results = product.rows[0];
-//   results.features = productFeatures.rows[0].json_build_object.feature
-//   return results
-//   client.end();
-// };

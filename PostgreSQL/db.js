@@ -3,7 +3,7 @@ require('dotenv')
 var { Pool, Client } = require('pg');
 
 // Provide connection string
-var client = new Client({
+var pool = new Pool({
   user: 'jasperbucad',
   password: process.env.PG_PASSWORD,
   database: 'overview',
@@ -12,6 +12,6 @@ var client = new Client({
 })
 
 // Connect database
-client.connect();
+pool.connect();
 
-module.exports = client;
+module.exports = pool;
