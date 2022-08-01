@@ -6,7 +6,7 @@ CREATE TABLE products (
   slogan VARCHAR(250),
   description VARCHAR(500),
   category VARCHAR(80),
-  default_price INTEGER
+  default_price VARCHAR(50)
 );
 
 CREATE TABLE product_features (
@@ -21,8 +21,8 @@ CREATE TABLE product_styles (
   id SERIAL PRIMARY KEY NOT NULL,
   product_id INTEGER,
   "name" VARCHAR(50),
-  sale_price INTEGER NULL,
-  original_price INTEGER NULL,
+  sale_price VARCHAR,
+  original_price VARCHAR,
   "default" Boolean
 );
 
@@ -53,10 +53,13 @@ ALTER TABLE product_photos ADD FOREIGN KEY (style_id) REFERENCES product_styles 
 ALTER TABLE related_products ADD FOREIGN KEY (product_id) REFERENCES products (id);
 
 \COPY products FROM './csvFiles/product.csv' Header csv delimiter ',';
-\COPY product_styles FROM './csvFiles/styles.csv' delimiter ',' CSV quote '"' NULL 'null';
+\COPY product_styles FROM './csvFiles/styles.csv' header csv delimiter ',';
+-- \COPY product_styles FROM './csvFiles/styles.csv' delimiter ',' CSV quote '"' NULL 'null';
 \COPY product_features FROM './csvFiles/features.csv' header csv delimiter ',';
 \COPY related_products FROM './csvFiles/related.csv' header csv delimiter ',';
 \COPY product_skus FROM './csvFiles/skus.csv' header csv delimiter ',';
 \COPY product_photos FROM  './csvFiles/photos.csv'  header csv delimiter ',';
+
+UPDATE product_styles SET sale_price = replace(sale_price, 'null', '0');
 
 

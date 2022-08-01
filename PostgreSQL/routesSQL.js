@@ -17,8 +17,7 @@ routerSQL.get('/products', (request, response) => {
   getAllProducts();
 });
 
-
-routerSQL.get('/product/:id', (request, response) => {
+routerSQL.get('/products/:id', (request, response) => {
   var getProductInfo = async () => {
     var results = await models.getProductInfo(request.params.id);
     try { response.status(200).send(results) }
@@ -36,7 +35,7 @@ routerSQL.get('/products/:product_id/related', (request, response) => {
   getRelatedProducts();
 });
 
-routerSQL.get('/:id/styles', (request, response) => {
+routerSQL.get('/products/:id/styles', (request, response) => {
   var getProductStyles = async () => {
     var results = await models.getProductStyles(request.params.id);
     try { response.status(200).send(results) }
