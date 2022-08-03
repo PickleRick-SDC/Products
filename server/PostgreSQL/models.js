@@ -25,11 +25,21 @@ var getProductInfo = async (id) => {
     LEFT JOIN product_features r ON p.id = r.product_id
     WHERE p.id = ${id}
     GROUP BY p.name, p.slogan, p.description, p.category, p.default_price`;
-  var results = await pool.query(queryString);
-  return results.rows[0].json_build_object;
+
+    var query2 = `SELECT
+    p.id, p.name, p.slogan, p.description, p.category, p.default_price,
+    (SELECT json_agg(json_build_object(
+      'feature', r.feature,
+      'value', r.value
+    )) FROM product_features r
+    WHERE r.product_id = ${id}) AS features
+    FROM products p
+    WHERE p.id = ${id}
+    `
+  var results = await pool.query(query2);
+  return results.rows[0]
   pool.end();
 };
-
 
 var getProductStyles = async (id) => {  // p = style r = photos q = skus
   var queryString = `SELECT

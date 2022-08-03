@@ -8,7 +8,7 @@ app.use(express.json());
 
 
 // import routers
-var routerSQL = require('../PostgreSQL/routesSQL.js')
+var routerSQL = require('./PostgreSQL/routesSQL.js')
 app.use('/pickleRick', routerSQL);
 
 var PORT = process.env.PORT || 3000;

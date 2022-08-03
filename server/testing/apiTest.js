@@ -13,8 +13,8 @@ describe ('ProductStyle API', () => {
     expect(getProductStyleAPI).to.have.status(200);
   });
 
-  it('should return product_id of 1 on success', () => {
-    expect(getProductStyleAPI.body.product_id).to.equal(1);
+  it('should return the productStyle properties on success', () => {
+    expect(getProductStyleAPI.body).to.have.keys(['product_id', 'results']);
   });
 });
 

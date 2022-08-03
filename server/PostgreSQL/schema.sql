@@ -1,3 +1,9 @@
+DROP DATABASE IF EXISTS overview;
+
+CREATE DATABASE overview;
+
+DROP TABLE IF EXISTS products, product_features, product_styles, product_skus, product_photos, related_products
+
 -- GET All products: Remove related products column
 -- GET product info: Remove related products, join products and product features table
 CREATE TABLE products (
@@ -62,4 +68,9 @@ ALTER TABLE related_products ADD FOREIGN KEY (product_id) REFERENCES products (i
 
 UPDATE product_styles SET sale_price = replace(sale_price, 'null', '0');
 
-
+CREATE INDEX index_related_product_id ON related_products(related_product_id);
+CREATE INDEX indie_product_id ON product_features(product_id);
+CREATE INDEX product_id_index ON product_styles(product_id);
+CREATE INDEX index_id ON product_styles(id);
+CREATE INDEX index_style_id ON product_photos(style_id);
+CREATE INDEX indie_style_id ON product_skus(style_id);
