@@ -4,10 +4,10 @@ var { Pool, Client } = require('pg');
 
 // Provide connection string
 var pool = new Pool({
-  user: 'jasperbucad',
+  user: 'ubuntu',
   password: process.env.PG_PASSWORD,
   database: 'overview',
-  host: 'localhost',
+  host: process.env.PG_HOST,
   port: 5432
 })
 
