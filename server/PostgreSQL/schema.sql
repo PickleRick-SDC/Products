@@ -1,9 +1,3 @@
-DROP DATABASE IF EXISTS overview;
-
-CREATE DATABASE overview;
-
-DROP TABLE IF EXISTS products, product_features, product_styles, product_skus, product_photos, related_products
-
 -- GET All products: Remove related products column
 -- GET product info: Remove related products, join products and product features table
 CREATE TABLE products (
@@ -60,7 +54,7 @@ ALTER TABLE related_products ADD FOREIGN KEY (product_id) REFERENCES products (i
 
 \COPY products FROM './csvFiles/product.csv' Header csv delimiter ',';
 \COPY product_styles FROM './csvFiles/styles.csv' header csv delimiter ',';
--- \COPY product_styles FROM './csvFiles/styles.csv' delimiter ',' CSV quote '"' NULL 'null';
+-- \COPY product_styles FROM '../csvFiles/styles.csv' delimiter ',' CSV quote '"' NULL 'null';
 \COPY product_features FROM './csvFiles/features.csv' header csv delimiter ',';
 \COPY related_products FROM './csvFiles/related.csv' header csv delimiter ',';
 \COPY product_skus FROM './csvFiles/skus.csv' header csv delimiter ',';
