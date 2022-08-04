@@ -78,6 +78,10 @@ var getRelatedProducts = async(id) => {
   pool.end();
 };
 
+var getToken = async () => {
+  return 'loaderio-3e36fd0c074aa8033a1592c5b716f601'
+}
+
 module.exports.getAllProducts = getAllProducts;
 module.exports.getProductInfo = getProductInfo;
 module.exports.getProductStyles = getProductStyles;

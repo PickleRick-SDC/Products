@@ -11,6 +11,8 @@ app.use(express.json());
 var routerSQL = require('./PostgreSQL/routesSQL.js')
 app.use('/pickleRick', routerSQL);
 
+app.get(`${process.env.LOADER_IO_KEY}`, (req, res) => { res.status(200).send(process.env.LOADER_IO_KEY)} );
+
 var PORT = process.env.PORT || 3000;
 
 app.listen(PORT);

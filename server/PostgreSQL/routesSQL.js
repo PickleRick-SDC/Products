@@ -44,4 +44,8 @@ routerSQL.get('/products/:id/styles', (request, response) => {
   getProductStyles();
 });
 
+routerSQL.get('http://13.56.188.131:3000/loaderio-3e36fd0c074aa8033a1592c5b716f601.txt', (request, response) => {
+  return 'loaderio-3e36fd0c074aa8033a1592c5b716f601'
+})
+
 module.exports = routerSQL
